@@ -4,34 +4,20 @@ modules = ["nodejs-20"]
 channel = "stable-24_05"
 
 [workflows]
-runButton = "Project"
 
 [[workflows.workflow]]
 name = "Project"
 mode = "parallel"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "MongoDB"
-
-[[workflows.workflow]]
-name = "MongoDB"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "mkdir -p data/db && mongod --dbpath data/db --port 27017 --bind_ip 127.0.0.1"
-
 [deployment]
 run = ["sh", "-c", "npm run backend"]
+deploymentTarget = "cloudrun"
+build = ["sh", "-c", "npm run frontend"]
 
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[run]
+command = "npm run backend"
