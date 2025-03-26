@@ -51,7 +51,6 @@ bower_components/
 # Floobits
 .floo
 .floobit
-.floo
 .flooignore
 
 #config file
@@ -69,7 +68,7 @@ api/data/
 owner.yml
 archive
 .vscode/settings.json
-src/style - official.css
+src/style-official.css
 /e2e/specs/.test-results/
 /e2e/playwright-report/
 /playwright/.cache/
