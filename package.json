@@ -141,5 +141,9 @@
       "admin/",
       "packages/"
     ]
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0"
   }
 }
