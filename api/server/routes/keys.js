@@ -4,6 +4,10 @@ const { updateUserKey, deleteUserKey, getUserKeyExpiry } = require('../services/
 const { requireJwtAuth } = require('../middleware/');
 
 router.put('/', requireJwtAuth, async (req, res) => {
+  // Prevent users from setting OpenAI keys as we're exclusively using OpenRouter
+  if (req.body.name === 'openAI') {
+    return res.status(403).send({ error: 'OpenAI API keys are managed by the system administrator' });
+  }
   await updateUserKey({ userId: req.user.id, ...req.body });
   res.status(201).send();
 });

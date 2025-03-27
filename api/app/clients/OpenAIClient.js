@@ -113,14 +113,8 @@ class OpenAIClient extends BaseClient {
     const { OPENAI_FORCE_PROMPT } = process.env ?? {};
     const { reverseProxyUrl: reverseProxy } = this.options;
 
-    if (
-      !this.useOpenRouter &&
-      ((reverseProxy && reverseProxy.includes(KnownEndpoints.openrouter)) ||
-        (this.options.endpoint &&
-          this.options.endpoint.toLowerCase().includes(KnownEndpoints.openrouter)))
-    ) {
-      this.useOpenRouter = true;
-    }
+    // Always use OpenRouter for API calls
+    this.useOpenRouter = true;
 
     if (this.options.endpoint?.toLowerCase() === 'ollama') {
       this.isOllama = true;
@@ -226,9 +220,8 @@ class OpenAIClient extends BaseClient {
       logger.debug('Using Azure endpoint');
     }
 
-    if (this.useOpenRouter) {
-      this.completionsUrl = 'https://openrouter.ai/api/v1/chat/completions';
-    }
+    // Always use OpenRouter API for completions
+    this.completionsUrl = 'https://openrouter.ai/api/v1/chat/completions';
 
     return this;
   }
@@ -655,15 +648,14 @@ class OpenAIClient extends BaseClient {
       configOptions.basePath = this.langchainProxy;
     }
 
-    if (this.useOpenRouter) {
-      configOptions.basePath = 'https://openrouter.ai/api/v1';
-      configOptions.baseOptions = {
-        headers: {
-          'HTTP-Referer': 'https://librechat.ai',
-          'X-Title': 'LibreChat',
-        },
-      };
-    }
+    // Always use OpenRouter
+    configOptions.basePath = 'https://openrouter.ai/api/v1';
+    configOptions.baseOptions = {
+      headers: {
+        'HTTP-Referer': 'https://librechat.ai',
+        'X-Title': 'LibreChat',
+      },
+    };
 
     const { headers } = this.options;
     if (headers && typeof headers === 'object' && !Array.isArray(headers)) {
@@ -687,7 +679,7 @@ class OpenAIClient extends BaseClient {
     const llm = createLLM({
       modelOptions,
       configOptions,
-      openAIApiKey: this.apiKey,
+      openAIApiKey: process.env.OPENROUTER_KEY || this.apiKey,
       azure: this.azure,
       streaming,
       callbacks: runManager.createCallbacks({
@@ -1256,7 +1248,7 @@ ${convo}
       /** @type {OpenAI} */
       const openai = new OpenAI({
         fetch: this.fetch,
-        apiKey: this.apiKey,
+        apiKey: process.env.OPENROUTER_KEY || this.apiKey,
         ...opts,
       });
 

@@ -26,10 +26,13 @@ const initializeClient = async ({
     AZURE_OPENAI_BASEURL,
     OPENAI_SUMMARIZE,
     DEBUG_OPENAI,
+    OPENROUTER_KEY,
   } = process.env;
   const { key: expiresAt } = req.body;
   const modelName = overrideModel ?? req.body.model;
-  const endpoint = overrideEndpoint ?? req.body.endpoint;
+  
+  // Set openAI endpoint as default but override with OpenRouter when needed
+  const endpoint = overrideEndpoint ?? req.body.endpoint ?? EModelEndpoint.openAI;
   const contextStrategy = isEnabled(OPENAI_SUMMARIZE) ? 'summarize' : null;
 
   const credentials = {
@@ -42,17 +45,17 @@ const initializeClient = async ({
     [EModelEndpoint.azureOpenAI]: AZURE_OPENAI_BASEURL,
   };
 
-  const userProvidesKey = isUserProvided(credentials[endpoint]);
-  const userProvidesURL = isUserProvided(baseURLOptions[endpoint]);
+  // Setting the user provides key to false as we're using OpenRouter
+  const userProvidesKey = false; // Disabling user provided API keys
+  const userProvidesURL = false; // Disabling user provided URLs
 
+  // No need to check user values since we're using OpenRouter
   let userValues = null;
-  if (expiresAt && (userProvidesKey || userProvidesURL)) {
-    checkUserKeyExpiry(expiresAt, endpoint);
-    userValues = await getUserKeyValues({ userId: req.user.id, name: endpoint });
-  }
 
-  let apiKey = userProvidesKey ? userValues?.apiKey : credentials[endpoint];
-  let baseURL = userProvidesURL ? userValues?.baseURL : baseURLOptions[endpoint];
+  // Always use OpenRouter for OpenAI endpoint
+  let apiKey = OPENROUTER_KEY;
+  // Set OpenRouter as the base URL
+  let baseURL = 'https://openrouter.ai/api/v1';
 
   let clientOptions = {
     contextStrategy,
