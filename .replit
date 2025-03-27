@@ -4,16 +4,40 @@ modules = ["nodejs-20"]
 channel = "stable-24_05"
 
 [workflows]
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Project"
 mode = "parallel"
 author = "agent"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "LibreChat"
+
+[[workflows.workflow]]
+name = "LibreChat"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run backend"
+waitForPort = 5000
+
 [deployment]
 run = ["sh", "-c", "npm run backend"]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "npm run frontend"]
+
+[[ports]]
+localPort = 3080
+externalPort = 3000
 
 [[ports]]
 localPort = 5000
