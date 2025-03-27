@@ -27,11 +27,11 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run backend"
+args = "HOST=0.0.0.0 PORT=5000 NODE_ENV=production node api/server/index.js"
 waitForPort = 5000
 
 [deployment]
-run = ["sh", "-c", "npm run backend"]
+run = ["sh", "-c", "HOST=0.0.0.0 PORT=5000 npm run backend"]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "npm run frontend"]
 

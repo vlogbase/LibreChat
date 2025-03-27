@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 const {
   refreshController,
   registrationController,
@@ -27,7 +28,10 @@ const {
   resetPasswordLimiter,
   validateRegistration,
   validatePasswordReset,
+  checkDomainAllowed,
 } = require('~/server/middleware');
+const { setAuthTokens } = require('~/server/services/AuthService');
+const { logger } = require('~/config');
 
 const router = express.Router();
 
